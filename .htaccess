@@ -1,0 +1,18 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Set default index file
+DirectoryIndex page2.html
+
+# Base directory
+RewriteBase /projet_fin-main/
+
+# Don't apply rules to existing files/directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect .php requests to .html if html exists
+RewriteRule ^([^/]+)\.php$ $1.html [L,QSA]
+
+# Don't redirect these files
+RewriteRule ^(login_handler|appointment_handler|get_doctors|setup_database|setup_doctors|update_doctors)\.php - [L]

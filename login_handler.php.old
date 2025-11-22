@@ -1,0 +1,69 @@
+<?php
+header('Content-Type: application/json');
+
+// Activer le rapport d'erreurs pour le débogage
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+try {
+    // Récupérer les données JSON de la requête
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+    
+    // Valider les données reçues
+    if (empty($data['email']) || empty($data['password']) || empty($data['role'])) {
+        throw new Exception('Tous les champs sont requis');
+    }
+    
+    $email = $data['email'];
+    $password = $data['password'];
+    $role = $data['role'];
+    
+    // Ici, vous devriez normalement vérifier dans la base de données
+    // Ceci est un exemple simplifié avec des identifiants codés en dur
+    
+    // Exemple de vérification pour un étudiant
+    if ($role === 'student' && $email === 'etudiant@esb.edu' && $password === 'etu123') {
+        echo json_encode([
+            'success' => true,
+            'user' => [
+                'id' => 1,
+                'email' => $email,
+                'nom' => 'Dupont',
+                'prenom' => 'Jean',
+                'role' => 'student',
+                'classe' => 'L3 Informatique'
+            ]
+        ]);
+        exit;
+    }
+    
+    // Exemple de vérification pour un médecin
+    if ($role === 'doctor' && $email === 'medecin@esb.edu' && $password === 'med123') {
+        echo json_encode([
+            'success' => true,
+            'user' => [
+                'id' => 2,
+                'email' => $email,
+                'nom' => 'Martin',
+                'prenom' => 'Sophie',
+                'role' => 'doctor',
+                'specialite' => 'Médecin Généraliste'
+            ]
+        ]);
+        exit;
+    }
+    
+    // Si les identifiants ne correspondent pas
+    echo json_encode([
+        'success' => false,
+        'message' => 'Email ou mot de passe incorrect'
+    ]);
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+}

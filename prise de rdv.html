@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Prise de Rendez-vous Étudiant - ESB Santé</title>
+  <style>
+    :root {
+      --primary-color: #04A4CC;
+      --secondary-color: #055c71;
+      --accent-color: #e6f0ff;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --white: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background-color: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      width: 90%;
+      max-width: 500px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      background-color: var(--primary-color);
+      color: var(--white);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+      text-align: left;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.3s;
+      box-sizing: border-box;
+      background-color: var(--white);
+    }
+
+    .form-group input:hover,
+    .form-group select:hover {
+      border-color: var(--primary-color);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(4, 164, 204, 0.2);
+      outline: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 0.5rem;
+      display: block;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--secondary-color);
+    }
+
+    .success {
+      text-align: center;
+      margin-top: 1rem;
+      color: #27ae60;
+      font-weight: 500;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 95%;
+      }
+
+      .header {
+        padding: 1.5rem;
+      }
+
+      .form-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h2><i class="fas fa-calendar-check"></i> Prise de Rendez-vous</h2>
+      <p>Service médical universitaire ESB Santé</p>
+    </div>
+
+    <div class="form-body">
+      <form id="rdvForm">
+        <div class="form-group">
+          <label for="nom">Nom :</label>
+          <input type="text" id="nom" name="nom" required>
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom :</label>
+          <input type="text" id="prenom" name="prenom" required>
+        </div>
+
+        <div class="form-group">
+          <label for="classe">Classe :</label>
+          <input type="text" id="classe" name="classe" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email :</label>
+          <input type="email" id="email" name="email" placeholder="prenom.nom@etu.esb.edu" required>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Date du rendez-vous :</label>
+          <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="horaire">Horaire :</label>
+          <input type="time" id="horaire" name="horaire" required>
+        </div>
+
+        <div class="form-group">
+          <label for="medecin">Médecin à consulter :</label>          <select id="medecin" name="medecin" required>
+            <option value="">-- Choisir --</option>
+            <option value="infirmier">Infirmier</option>
+            <option value="generaliste">Médecin généraliste</option>
+            <option value="psychologue">Psychologue</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Envoyer la demande
+        </button>
+        <p class="success" id="successMsg"></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let doctors = {};    // Fetch doctors and update the UI    async function fetchDoctors() {
+      try {
+        console.log('Tentative de récupération des médecins...');
+        const response = await fetch('get_doctors.php');
+        
+        if (!response.ok) {
+          console.error('Erreur HTTP:', response.status, response.statusText);
+          const text = await response.text();
+          console.error('Contenu de la réponse:', text);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Réponse brute du serveur:', data);
+        
+        if (data.success) {
+          doctors = data.doctors;
+          console.log('Médecins récupérés et stockés:', doctors);
+          console.log('Spécialités disponibles:', Object.keys(doctors));
+          
+          if (Object.keys(doctors).length === 0) {
+            console.warn('Aucun médecin trouvé dans la base de données');
+            return false;
+          }
+          
+          return true;
+        } else {
+          console.error('Erreur lors de la récupération des médecins:', data.message);
+          return false;
+        }
+      } catch (error) {
+        console.error('Erreur complète:', error);
+        return false;
+      }
+    }    // Get doctor ID based on speciality
+    function getDoctorIdBySpeciality(speciality) {
+      console.log('Recherche de médecin pour la spécialité:', speciality);
+      console.log('Médecins disponibles:', doctors);
+
+      // Normaliser la spécialité recherchée
+      const searchSpeciality = speciality.toLowerCase();
+      
+      // Vérifier si la spécialité existe et a des médecins
+      if (doctors[searchSpeciality] && doctors[searchSpeciality].length > 0) {
+        // Sélectionner un médecin aléatoire parmi ceux disponibles
+        const randomIndex = Math.floor(Math.random() * doctors[searchSpeciality].length);
+        const selectedDoctor = doctors[searchSpeciality][randomIndex];
+        console.log('Médecin sélectionné:', selectedDoctor);
+        return selectedDoctor.id;
+      }
+      
+      console.warn('Aucun médecin trouvé pour la spécialité:', speciality);
+      console.log('Spécialités disponibles:', Object.keys(doctors));
+      return null;
+    }
+
+    // Check if user is logged in and pre-fill form if data exists
+    document.addEventListener('DOMContentLoaded', async function() {
+      const userData = JSON.parse(localStorage.getItem('user'));
+      
+      // Fetch doctors first
+      await fetchDoctors();
+
+      // If user data exists, pre-fill the form (but keep fields editable)
+      if (userData) {
+        console.log('User data:', userData);
+        document.getElementById('nom').value = userData.nom || '';
+        document.getElementById('prenom').value = userData.prenom || '';
+        document.getElementById('email').value = userData.email || '';
+        document.getElementById('classe').value = userData.classe || '';
+      }
+
+      // Set minimum date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').min = today;
+    });
+
+    // Handle form submission
+    document.getElementById('rdvForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById('nom').value;
+      const prenom = document.getElementById('prenom').value;
+      const email = document.getElementById('email').value;
+      const classe = document.getElementById('classe').value;
+      const date = document.getElementById('date').value;
+      const horaire = document.getElementById('horaire').value;
+      const medecin = document.getElementById('medecin').value;
+
+      // Basic validation
+      if (!nom || !prenom || !email || !classe || !date || !horaire || !medecin) {
+        alert('Veuillez remplir tous les champs');
+        return;
+      }
+
+      // Validate email format
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Veuillez entrer une adresse email valide');
+        return;
+      }
+
+      // Validate appointment date
+      const appointmentDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (appointmentDate < today) {
+        alert('La date du rendez-vous doit être dans le futur');
+        return;
+      }
+
+      // Validate appointment time (8:00 - 17:00)
+      const [hours, minutes] = horaire.split(':').map(Number);
+      if (hours < 8 || hours >= 17) {
+        alert('Les rendez-vous sont possibles uniquement entre 8h et 17h');
+        return;
+      }
+
+      console.log('Searching for doctor with specialty:', medecin);
+      const doctor_id = getDoctorIdBySpeciality(medecin);
+      if (!doctor_id) {
+        alert('Aucun médecin disponible pour cette spécialité. Veuillez réessayer plus tard.');
+        return;
+      }
+
+      try {
+        console.log('Submitting appointment...');
+        const response = await fetch('appointment_handler.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'create',
+            nom: nom,
+            prenom: prenom,
+            email: email,
+            classe: classe,
+            doctor_id: doctor_id,
+            date: date,
+            time: horaire
+          })
+        });
+
+        const result = await response.json();
+        console.log('Appointment result:', result);
+        
+        if (result.success) {
+          const successMsg = document.getElementById('successMsg');
+          successMsg.textContent = result.message || 'Rendez-vous créé avec succès!';
+          successMsg.style.display = 'block';
+          
+          // Optionally save user data to localStorage
+          localStorage.setItem('user', JSON.stringify({
+            nom: nom,
+            prenom: prenom,
+            email: email,
+            classe: classe
+          }));
+
+          // Reset form
+          document.getElementById('date').value = '';
+          document.getElementById('horaire').value = '';
+          document.getElementById('medecin').value = '';
+        } else {
+          alert(result.message || 'Erreur lors de la création du rendez-vous');
+        }
+      } catch (error) {
+        alert('Erreur de connexion au serveur');
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

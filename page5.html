@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>ESB Santé - Connexion Admin</title>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <style>
+        :root {
+            --primary-color: #04A4CC;
+            --secondary-color: #e6f2f8;
+            --accent-color: #ff6b35;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .login-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #004a6a;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="Vert_Bleu_et_Rouge_Moderne_Icônes_Médical_Hôpital_Logo__1_-removebg-preview.png" alt="ESB Santé" class="logo">
+        <h1>Connexion Administrateur</h1>
+          <form id="loginForm">            <div class="input-group">
+                <label for="username">Email administrateur</label>
+                <input type="email" id="username" name="username" placeholder="admin@esb-sante.edu" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" placeholder="admin123" required>
+            </div>
+            
+            <div class="error-message" id="error-message">
+                Email ou mot de passe incorrect</div>
+            
+            <button type="submit">Se connecter</button>
+        </form>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="#" onclick="logout()" style="color: var(--primary-color); text-decoration: none;">Se déconnecter</a>
+        </div>
+    </div>
+    
+    <script>
+    async function logout() {
+        // Clear local storage
+        localStorage.removeItem('user');
+        
+        try {
+            // Call logout handler
+            await fetch('logout_handler.php');
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+        }
+        
+        // Redirect to login page
+        window.location.href = 'page5.html';
+    }
+    </script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (auth.isAuthenticated()) {
+                const user = auth.getUser();
+                // If logged in but not as admin, redirect to appropriate page
+                if (user.role !== 'admin') {
+                    window.location.href = auth.pageMap[user.role].home;
+                    return;
+                }
+            }
+
+            document.querySelector('form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                try {
+                    const response = await fetch('login_handler.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                            role: 'admin'
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        window.location.href = auth.pageMap.admin.home;
+                    } else {
+                        document.getElementById('error-message').style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    document.getElementById('error-message').style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+[24-May-2025 15:21:08 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Commands out of sync; you can't run this command now in C:\xampp\htdocs\projet_fin-main\appointment_handler.php:45
+Stack trace:
+#0 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(45): mysqli_prepare(Object(mysqli), 'SELECT id FROM ...')
+#1 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(84): createAppointment('4', 7, '2025-05-28', '11:23', '2')
+#2 {main}
+  thrown in C:\xampp\htdocs\projet_fin-main\appointment_handler.php on line 45
+[24-May-2025 15:21:12 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Commands out of sync; you can't run this command now in C:\xampp\htdocs\projet_fin-main\appointment_handler.php:45
+Stack trace:
+#0 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(45): mysqli_prepare(Object(mysqli), 'SELECT id FROM ...')
+#1 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(84): createAppointment('4', 7, '2025-05-28', '11:23', '2')
+#2 {main}
+  thrown in C:\xampp\htdocs\projet_fin-main\appointment_handler.php on line 45
+[24-May-2025 15:21:18 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Commands out of sync; you can't run this command now in C:\xampp\htdocs\projet_fin-main\appointment_handler.php:45
+Stack trace:
+#0 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(45): mysqli_prepare(Object(mysqli), 'SELECT id FROM ...')
+#1 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(84): createAppointment('4', 7, '2025-05-28', '11:23', '2')
+#2 {main}
+  thrown in C:\xampp\htdocs\projet_fin-main\appointment_handler.php on line 45
+[24-May-2025 15:25:41 Europe/Berlin] Received raw input: {"action":"create","student_id":"4","doctor_id":13,"date":"2025-05-28","time":"11:28","classe":"2"}
+[24-May-2025 15:25:41 Europe/Berlin] Decoded data: Array
+(
+    [action] => create
+    [student_id] => 4
+    [doctor_id] => 13
+    [date] => 2025-05-28
+    [time] => 11:28
+    [classe] => 2
+)
+
+[24-May-2025 15:25:41 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Commands out of sync; you can't run this command now in C:\xampp\htdocs\projet_fin-main\appointment_handler.php:52
+Stack trace:
+#0 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(52): mysqli_prepare(Object(mysqli), 'SELECT id FROM ...')
+#1 C:\xampp\htdocs\projet_fin-main\appointment_handler.php(95): createAppointment('4', 13, '2025-05-28', '11:28', '2')
+#2 {main}
+  thrown in C:\xampp\htdocs\projet_fin-main\appointment_handler.php on line 52

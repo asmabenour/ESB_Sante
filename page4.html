@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Médecin - ESB Santé</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    <script src="js/auth.js"></script>
+    <style>
+        :root {
+            --primary: #04A4CC;
+            --primary-light: #dbeafe;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f3f4f6;
+            --dark: #111827;
+            --gray: #6b7280;
+            --white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: var(--dark);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--white);
+            padding: 1.5rem 0;
+            border-right: 1px solid var(--border);
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover, .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Calendar */
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calendar th {
+            padding: 0.75rem;
+            text-align: center;
+            background-color: var(--light);
+            font-weight: 500;
+        }
+
+        .calendar td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            height: 80px;
+            vertical-align: top;
+        }
+
+        .calendar .today {
+            background-color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .calendar .other-month {
+            color: var(--gray);
+            background-color: #f9fafb;
+        }
+
+        /* Availability Slots */
+        .availability-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .slot {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            background-color: var(--light);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slot.booked {
+            background-color: #fee2e2;
+            color: var(--danger);
+        }
+
+        .slot.available {
+            background-color: #dcfce7;
+            color: var(--secondary);
+        }
+
+        /* Appointments */
+        .appointment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .appointment:hover {
+            background-color: var(--light);
+        }
+
+        .appointment-info {
+            flex: 1;
+        }
+
+        .appointment-time {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .appointment-patient {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .appointment-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background-color: #dcfce7;
+            color: var(--secondary);
+        }
+
+        .status-canceled {
+            background-color: #fee2e2;
+            color: var(--danger);
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            padding: 1.5rem;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-hospital"></i>
+            <span>ESB Santé</span>
+        </div>
+        <div class="user-menu">
+            <span>Dr. Walid Ben Amor </span>
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Photo de profil" class="user-avatar">
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Disponibilités</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-list-ul"></i>
+                <span>Rendez-vous</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-user-md"></i>
+                    Espace Médecin
+                </h1>
+                <div>
+                    <button class="btn btn-primary" onclick="openAddAvailabilityModal()">
+                        <i class="fas fa-plus"></i>
+                        Ajouter des créneaux
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Tableau de bord
+                </div>
+                <div class="tab" onclick="switchTab('availability')">
+                    <i class="fas fa-calendar-check"></i>
+                    Mes disponibilités
+                </div>
+                <div class="tab" onclick="switchTab('appointments')">
+                    <i class="fas fa-list-ul"></i>
+                    Mes rendez-vous
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-calendar-day"></i>
+                            Rendez-vous aujourd'hui
+                        </h2>
+                        <div class="badge">
+                            <i class="fas fa-clock"></i>
+                            3 consultations
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Today's Appointments -->
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">09:00 - 09:30</div>
+                                <div class="appointment-patient">Rim Kallel (Étudiante en 3ème LSG )</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Voir
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">11:00 - 11:30</div>
+                                <div class="appointment-patient"> Youssef Trabelsi (Étudiant en 3èmeLBC)</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Voir
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">14:00 - 14:30</div>
+                                <div class="appointment-patient">Hamza  Sghaier (Étudiante en 2èmeLBC)</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Voir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-calendar-week"></i>
+                            Calendrier
+                        </h2>
+                        <div class="btn-group">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn btn-outline">
+                                Novembre 2023
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="calendar">
+                            <thead>
+                                <tr>
+                                    <th>Lun</th>
+                                    <th>Mar</th>
+                                    <th>Mer</th>
+                                    <th>Jeu</th>
+                                    <th>Ven</th>
+                                    <th>Sam</th>
+                                    <th>Dim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="other-month">30</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>4</td>
+                                    <td>5</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>8</td>
+                                    <td class="today">9</td>
+                                    <td>10</td>
+                                    <td>11</td>
+                                    <td>12</td>
+                                    <td>13</td>
+                                </tr>
+                                <tr>
+                                    <td>14</td>
+                                    <td>15</td>
+                                    <td>16</td>
+                                    <td>17</td>
+                                    <td>18</td>
+                                    <td>19</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>21</td>
+                                    <td>22</td>
+                                    <td>23</td>
+                                    <td>24</td>
+                                    <td>25</td>
+                                    <td>26</td>
+                                    <td>27</td>
+                                </tr>
+                                <tr>
+                                    <td>28</td>
+                                    <td>29</td>
+                                    <td>30</td>
+                                    <td class="other-month">1</td>
+                                    <td class="other-month">2</td>
+                                    <td class="other-month">3</td>
+                                    <td class="other-month">4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Availability Tab -->
+            <div id="availabilityTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Gestion des disponibilités
+                        </h2>
+                        <button class="btn btn-primary" onclick="openAddAvailabilityModal()">
+                            <i class="fas fa-plus"></i>
+                            Nouveau créneau
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <h3 style="margin-bottom: 1rem;">Lundi 6 novembre 2023</h3>
+                        <div class="availability-slots">
+                            <div class="slot available">
+                                <span>09:00 - 10:00</span>
+                                <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="slot booked">
+                                <span>11:00 - 12:00</span>
+                                <span>(Réservé par Rim Kallel )</span>
+                            </div>
+                            <div class="slot available">
+                                <span>14:00 - 15:00</span>
+                                <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 1.5rem 0 1rem;">Mardi 7 novembre 2023</h3>
+                        <div class="availability-slots">
+                            <div class="slot booked">
+                                <span>08:30 - 09:30</span>
+                                <span>(Réservé par Youssef Trabelsi)</span>
+                            </div>
+                            <div class="slot available">
+                                <span>10:00 - 11:00</span>
+                                <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Tab -->
+            <div id="appointmentsTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list-ul"></i>
+                            Liste des rendez-vous
+                        </h2>
+                        <div class="btn-group">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-filter"></i>
+                                Filtrer
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-download"></i>
+                                Exporter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">Lun 6 nov - 11:00</div>
+                                <div class="appointment-patient">Rim Kallel (Étudiante en 3ème LSG)</div>
+                                <div>Motif: Consultation générale</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Détails
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">Mar 7 nov - 08:30</div>
+                                <div class="appointment-patient">Youssef Trabelsi (Étudiant en 3ème LBC)</div>
+                                <div>Motif: Certificat médical</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Détails
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="appointment">
+                            <div class="appointment-info">
+                                <div class="appointment-time">Mer 8 nov - 14:00</div>
+                                <div class="appointment-patient">Hamza Sghaier (Étudiante en 2èmeLBC)</div>
+                                <div>Motif: Suivi psychologique</div>
+                                <span class="appointment-status status-confirmed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmé
+                                </span>
+                            </div>
+                            <div class="appointment-actions">
+                                <button class="btn btn-outline" onclick="openViewAppointmentModal()">
+                                    <i class="fas fa-eye"></i>
+                                    Détails
+                                </button>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profileTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-user"></i>
+                            Mon Profil
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+                            <div>
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Photo de profil" 
+                                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="margin-bottom: 0.5rem;">Dr. Walid Ben Amor</h3>
+                                <p style="color: var(--gray); margin-bottom: 1rem;">Médecin généraliste</p>
+                                <div style="display: flex; gap: 1rem;">
+                                    <button class="btn btn-outline">
+                                        <i class="fas fa-edit"></i>
+                                        Modifier la photo
+                                    </button>
+                                    <button class="btn btn-outline">
+                                        <i class="fas fa-key"></i>
+                                        Changer le mot de passe
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom</label>
+                                <input type="text" value="Ben Amor" style="background-color: var(--light);">
+                            </div>
+                            <div class="form-group">
+                                <label>Prénom</label>
+                                <input type="text" value="Walid" style="background-color: var(--light);">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="walid.benamor@esb.tn" style="background-color: var(--light);">
+                            </div>
+                            <div class="form-group">
+                                <label>Téléphone</label>
+                                <input type="tel" value="+216 12 345 678" style="background-color: var(--light);">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Spécialité</label>
+                            <input type="text" value="Médecine générale" style="background-color: var(--light);">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bio</label>
+                            <textarea rows="4" style="background-color: var(--light);">Médecin généraliste avec 10 ans d'expérience, spécialisé dans le suivi des étudiants.</textarea>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Enregistrer les modifications
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Availability Modal -->
+    <div class="modal" id="addAvailabilityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>
+                    Ajouter des disponibilités
+                </h3>
+                <button class="close-modal" onclick="closeModal('addAvailabilityModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="availability-date">Date</label>
+                <input type="date" id="availability-date" value="2023-11-10">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start-time">Heure de début</label>
+                    <input type="time" id="start-time" value="09:00">
+                </div>
+                <div class="form-group">
+                    <label for="end-time">Heure de fin</label>
+                    <input type="time" id="end-time" value="10:00">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="recurrence">Récurrence</label>
+                <select id="recurrence">
+                    <option value="none">Une seule fois</option>
+                    <option value="daily">Tous les jours</option>
+                    <option value="weekly" selected>Toutes les semaines</option>
+                    <option value="monthly">Tous les mois</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="duration">Durée des créneaux (minutes)</label>
+                <input type="number" id="duration" value="30" min="15" max="120" step="15">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('addAvailabilityModal')">
+                    Annuler
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Appointment Modal -->
+    <div class="modal" id="viewAppointmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Détails du rendez-vous
+                </h3>
+                <button class="close-modal" onclick="closeModal('viewAppointmentModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Patient</label>
+                <div style="padding: 0.75rem; background-color: var(--light); border-radius: 0.375rem;">
+                    <strong>Rim Kallel</strong><br>
+                    Étudiante en 3ème LSG<br>
+                    N° étudiant: 7<br>
+                    Email: rim.kallel@esb.tn
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <div style="padding: 0.75rem; background-color: var(--light); border-radius: 0.375rem;">
+                        06/11/2023
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Heure</label>
+                    <div style="padding: 0.75rem; background-color: var(--light); border-radius: 0.375rem;">
+                        11:00 - 11:30
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Motif</label>
+                <div style="padding: 0.75rem; background-color: var(--light); border-radius: 0.375rem;">
+                    Consultation générale - Certificat médical requis
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes médicales</label>
+                <textarea rows="4" placeholder="Ajouter des notes sur la consultation...">Aucune allergie connue. À vérifier tension artérielle.</textarea>
+            </div>
+            <div class="form-group">
+                <label>Documents</label>
+                <div style="padding: 0.75rem; background-color: var(--light); border-radius: 0.375rem;">
+                    <button class="btn btn-outline" style="margin-right: 0.5rem;">
+                        <i class="fas fa-file-medical"></i>
+                        Certificat médical
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-prescription"></i>
+                        Ordonnance
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('viewAppointmentModal')">
+                    Fermer
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Enregistrer les notes
+                </button>
+                <button class="btn btn-danger">
+                    <i class="fas fa-times"></i>
+                    Annuler RDV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check login status
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'doctor') {
+            window.location.href = 'page2.html';
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Navigation
+        function handleNavigation(menuItem) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            menuItem.classList.add('active');
+            
+            const itemText = menuItem.querySelector('span').textContent;
+            
+            if (itemText === 'Disponibilités') {
+                switchTab('availability');
+            } else if (itemText === 'Rendez-vous') {
+                switchTab('appointments');
+            } else if (itemText === 'Profil') {
+                switchTab('profile');
+            } else if (itemText === 'Déconnexion') {
+                localStorage.removeItem('user');
+                window.location.href = 'page2.html';
+            } else {
+                switchTab('dashboard');
+            }
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                handleNavigation(this);
+            });
+        });
+
+        // Modal functions
+        function openAddAvailabilityModal() {
+            document.getElementById('addAvailabilityModal').style.display = 'flex';
+        }
+
+        function openViewAppointmentModal() {
+            document.getElementById('viewAppointmentModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        };
+
+        // Delete availability slot
+        document.querySelectorAll('.btn-danger:has(.fa-trash)').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm("Voulez-vous vraiment supprimer ce créneau de disponibilité ?")) {
+                    this.closest('.slot').remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

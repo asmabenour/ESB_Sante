@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - ESB Santé</title>
+    <link rel="stylesheet" href="css/navigation.css">
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #04A4CC;
+            --secondary-color: #055c71;
+            --accent-color: #e6f0ff;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --error-color: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .login-container {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 480px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .login-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 200px;
+            margin-bottom: 1rem;
+        }
+        
+        .login-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            opacity: 0.9;
+        }
+        
+        .login-body {
+            padding: 2rem;
+        }
+        
+        .user-selector {
+            display: flex;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--accent-color);
+        }
+        
+        .user-option {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-option:hover {
+            background-color: rgba(4, 164, 204, 0.1);
+        }
+        
+        .user-option.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .user-option i {
+            font-size: 1.5rem;
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(4, 164, 204, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="logo_esb (1).png" alt="ESB Santé Logo" class="logo">
+            <h1>ESB Santé</h1>
+            <p>Connectez-vous à votre compte</p>
+        </div>
+
+        <div class="login-body">            <div class="user-selector">
+                <button class="user-option active" data-role="student">
+                    <i class="fas fa-user-graduate"></i>
+                    Étudiant
+                </button>
+                <button class="user-option" data-role="doctor">
+                    <i class="fas fa-user-md"></i>
+                    Médecin
+                </button>
+                <button class="user-option" data-role="admin">
+                    <i class="fas fa-user-shield"></i>
+                    Admin
+                </button>
+            </div>
+
+            <form id="studentForm" class="login-form active" data-role="student">
+                <div class="form-group">
+                    <label for="studentEmail">Email universitaire</label>
+                    <input type="email" id="studentEmail" name="email" required placeholder="prenom.nom@etu.esb.edu">
+                </div>
+                <div class="form-group">
+                    <label for="studentPassword">Mot de passe</label>
+                    <input type="password" id="studentPassword" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Se connecter</button>
+                <div class="error-message" id="studentError"></div>
+            </form>
+
+            <form id="doctorForm" class="login-form" data-role="doctor">
+                <div class="form-group">
+                    <label for="doctorEmail">Email professionnel</label>
+                    <input type="email" id="doctorEmail" name="email" required placeholder="prenom.nom@esb-sante.edu">
+                </div>
+                <div class="form-group">
+                    <label for="doctorPassword">Mot de passe</label>
+                    <input type="password" id="doctorPassword" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Se connecter</button>
+                <div class="error-message" id="doctorError"></div>
+            </form>
+
+            <form id="adminForm" class="login-form" data-role="admin">
+                <div class="form-group">
+                    <label for="adminEmail">Email administrateur</label>
+                    <input type="email" id="adminEmail" name="email" required placeholder="admin@esb-sante.edu">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Mot de passe</label>
+                    <input type="password" id="adminPassword" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Se connecter</button>
+                <div class="error-message" id="adminError"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userOptions = document.querySelectorAll('.user-option');
+            const loginForms = document.querySelectorAll('.login-form');
+
+            // Fonction pour gérer le changement de formulaire
+            function switchForm(role) {
+                userOptions.forEach(option => {
+                    option.classList.toggle('active', option.dataset.role === role);
+                });
+                loginForms.forEach(form => {
+                    form.classList.toggle('active', form.dataset.role === role);
+                });
+            }
+
+            // Gestionnaire de clic pour les options utilisateur
+            userOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    switchForm(option.dataset.role);
+                });
+            });
+
+            // Gestionnaire de soumission pour les formulaires
+            loginForms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const role = this.dataset.role;
+                    const errorElement = document.getElementById(role + 'Error');
+                    const email = this.querySelector('input[type="email"]').value;
+                    const password = this.querySelector('input[type="password"]').value;                    try {
+                        const success = await auth.login({ email, password }, role);
+                        if (success) {
+                            if (role === 'student') {
+                                window.location.href = 'page3.html';
+                            } else if (role === 'doctor') {
+                                window.location.href = 'page4.html';
+                            } else if (role === 'admin') {
+                                window.location.href = 'page6.html';
+                            }
+                        } else {
+                            errorElement.textContent = 'Email ou mot de passe incorrect';
+                            errorElement.style.display = 'block';
+                        }
+                    } catch (error) {
+                        errorElement.textContent = 'Erreur lors de la connexion';
+                        errorElement.style.display = 'block';
+                        console.error('Login error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Médecin - ESB Santé</title>
+    <style>
+        :root {
+            --primary-color: #04A4CC;
+            --secondary-color: #055c71;
+            --accent-color: #e6f0ff;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --error-color: #dc3545;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(4, 164, 204, 0.2);
+        }
+
+        .form-group input.error, .form-group select.error {
+            border-color: var(--error-color);
+        }
+
+        .form-group input.error:focus, .form-group select.error:focus {
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .success-message, .error-alert {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .success-message {
+            color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .error-alert {
+            color: var(--error-color);
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ajouter un Médecin</h1>
+            <p>Inscription d'un nouveau médecin dans le système</p>
+        </div>
+
+        <form id="addDoctorForm" novalidate>
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" pattern="[A-Za-zÀ-ÖØ-öø-ÿ\- ]{2,50}" required>
+                <div class="error-message" id="nomError">Le nom doit contenir entre 2 et 50 caractères</div>
+            </div>
+
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" pattern="[A-Za-zÀ-ÖØ-öø-ÿ\- ]{2,50}" required>
+                <div class="error-message" id="prenomError">Le prénom doit contenir entre 2 et 50 caractères</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email professionnel</label>
+                <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@esb-sante\.edu$" placeholder="prenom.nom@esb-sante.edu" required>
+                <div class="error-message" id="emailError">L'email doit être un email professionnel valide (@esb-sante.edu)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="specialite">Spécialité</label>
+                <select id="specialite" name="specialite" required>
+                    <option value="">-- Choisir une spécialité --</option>
+                    <option value="generaliste">Médecin généraliste</option>
+                    <option value="infirmier">Infirmier</option>
+                    <option value="psychologue">Psychologue</option>
+                </select>
+                <div class="error-message" id="specialiteError">Veuillez sélectionner une spécialité</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$">
+                <div class="error-message" id="passwordError">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre</div>
+            </div>
+
+            <button type="submit" class="submit-btn">Ajouter le médecin</button>
+        </form>
+
+        <div id="successMessage" class="success-message">
+            Médecin ajouté avec succès !
+        </div>
+        <div id="errorAlert" class="error-alert"></div>
+    </div>
+
+    <!-- Ajout des scripts nécessaires -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Vérifier l'authentification admin
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!auth.hasRole('admin')) {
+                window.location.href = 'page2.html';
+                return;
+            }
+        });
+
+        document.getElementById('addDoctorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Reset all error states
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('input, select').forEach(input => input.classList.remove('error'));
+            document.getElementById('errorAlert').style.display = 'none';
+
+            // Validate all fields
+            let hasError = false;
+            const inputs = ['nom', 'prenom', 'email', 'specialite', 'password'];
+            
+            inputs.forEach(field => {
+                const input = document.getElementById(field);
+                const error = document.getElementById(field + 'Error');
+                
+                if (!input.checkValidity()) {
+                    input.classList.add('error');
+                    error.style.display = 'block';
+                    hasError = true;
+                }
+            });
+
+            // Additional email validation
+            const emailInput = document.getElementById('email');
+            if (!emailInput.value.endsWith('@esb-sante.edu')) {
+                emailInput.classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+                hasError = true;
+            }
+
+            // Additional speciality validation
+            const specialiteInput = document.getElementById('specialite');
+            if (!specialiteInput.value) {
+                specialiteInput.classList.add('error');
+                document.getElementById('specialiteError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            const formData = {
+                nom: document.getElementById('nom').value.trim(),
+                prenom: document.getElementById('prenom').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                specialite: document.getElementById('specialite').value,
+                password: document.getElementById('password').value,
+                role: 'doctor'
+            };
+
+            try {
+                const response = await fetch(config.api.addUser, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('addDoctorForm').reset();
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 3000);
+                } else {
+                    const errorAlert = document.getElementById('errorAlert');
+                    errorAlert.textContent = data.message || 'Erreur lors de l\'ajout du médecin';
+                    errorAlert.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                const errorAlert = document.getElementById('errorAlert');
+                errorAlert.textContent = 'Erreur lors de la communication avec le serveur';
+                errorAlert.style.display = 'block';
+            }
+        });
+
+        // Real-time validation
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', function() {
+                const error = document.getElementById(this.id + 'Error');
+                if (this.checkValidity() && 
+                    (this.id !== 'email' || this.value.endsWith('@esb-sante.edu')) &&
+                    (this.id !== 'specialite' || this.value !== '')) {
+                    this.classList.remove('error');
+                    error.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
